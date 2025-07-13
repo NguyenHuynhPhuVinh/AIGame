@@ -1,54 +1,28 @@
 {
-  "name": "yugioh-ai-game",
-  "version": "2.0.0",
-  "description": "AI-driven Yu-Gi-Oh game với MCP và React Ink UI",
+  "name": "mcp-waifu-card-game",
+  "version": "1.0.0",
+  "description": "Pure MCP Waifu Card Game - AI tự chơi 100% qua MCP tools",
   "type": "module",
-  "main": "./build/index.js",
+  "main": "build/mcp.js",
   "bin": {
-    "yugioh-game": "./build/game.js",
-    "yugioh-mcp": "./build/mcp.js"
+    "waifu-mcp": "./build/mcp.js"
   },
   "scripts": {
     "build": "tsc",
-    "dev:game": "tsx watch src/game.ts",
-    "dev:mcp": "tsx watch src/mcp.ts",
-    "start:game": "node ./build/game.js",
-    "start:mcp": "node ./build/mcp.js",
-    "clean": "rm -rf build",
-    "type-check": "tsc --noEmit"
+    "dev": "tsx watch src/mcp.ts",
+    "start": "node build/mcp.js",
+    "init-game": "node build/init-game.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com//yugioh-ai-game.git"
-  },
-  "keywords": [
-    "yugioh",
-    "ai-game",
-    "mcp",
-    "model-context-protocol",
-    "react-ink",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com//yugioh-ai-game/issues"
-  },
-  "homepage": "https://github.com//yugioh-ai-game#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0",
-    "react": "^18.3.1",
-    "ink": "^5.0.1",
-    "ink-text-input": "^6.0.0",
-    "ink-select-input": "^6.0.0",
-    "ink-gradient": "^3.0.0",
-    "ink-big-text": "^2.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.2",
     "zod": "^3.25.23"
   },
   "devDependencies": {
-    "@types/node": "^22.15.21",
-    "@types/react": "^18.3.12",
+    "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.8.3"
-  }
+  },
+  "keywords": ["mcp", "ai", "card-game", "waifu", "anime"],
+  "author": "AI Assistant",
+  "license": "MIT"
 }
