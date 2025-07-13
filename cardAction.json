@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-07-12T15:02:40.079Z",
+  "playerId": "player1",
+  "actionType": "play_card",
+  "cardId": "orc_14",
+  "targetPlayerId": "player2",
+  "description": "Player1 chơi thẻ Orc Berserker: Tấn công đối thủ mỗi lượt với 3 damage",
+  "processed": false
+}
