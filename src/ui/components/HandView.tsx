@@ -180,6 +180,11 @@ export const HandView: React.FC<HandViewProps> = ({
     );
   };
 
+  const selectedCard =
+    selectedIndex >= 0 && selectedIndex < hand.length
+      ? getCardById(hand[selectedIndex])
+      : null;
+
   return (
     <Box flexDirection="column" width="100%">
       <Box justifyContent="center" marginBottom={1}>
@@ -190,6 +195,16 @@ export const HandView: React.FC<HandViewProps> = ({
 
       <Box justifyContent="flex-start" flexWrap="wrap">
         {hand.map((cardId, index) => renderCard(cardId, index))}
+      </Box>
+
+      {/* Controls hint */}
+      <Box justifyContent="center" marginTop={1}>
+        <Text color="cyan">
+          [←→] Navigate | [D] Details
+          {selectedCard?.cardType === "monster" && " | [S] Summon"}
+          {selectedCard?.cardType === "spell" && " | [C] Cast Spell"}
+          {selectedCard?.cardType === "trap" && " | [T] Set Trap"}
+        </Text>
       </Box>
 
       {showDetails &&

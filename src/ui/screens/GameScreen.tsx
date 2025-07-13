@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
-import { GameState } from "../../database/index.js";
+import { GameState, getCardById } from "../../database/index.js";
 import { GameBoard } from "../components/GameBoard.js";
 import { HandView } from "../components/HandView.js";
 import { GameLog } from "../components/GameLog.js";
@@ -9,6 +9,7 @@ interface GameScreenProps {
   gameState: GameState;
   onAction: (action: any) => void;
   onExit: () => void;
+  isWaitingForAI?: boolean;
 }
 
 type ViewMode = "board" | "hand" | "log" | "help";
@@ -17,6 +18,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   gameState,
   onAction,
   onExit,
+  isWaitingForAI = false,
 }) => {
   const [viewMode, setViewMode] = useState<ViewMode>("board");
   const [selectedHandIndex, setSelectedHandIndex] = useState(0);
@@ -57,23 +59,75 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         setShowCardDetails(!showCardDetails);
       }
       if (input === "s" && isPlayerTurn) {
-        // Summon selected card
+        // Summon selected card (only monsters)
         const cardId = currentPlayer.hand[selectedHandIndex];
         if (cardId) {
-          onAction({
-            id: `summon_${Date.now()}`,
-            playerId: "player1",
-            actionType: "normal_summon",
-            timestamp: new Date().toISOString(),
-            description: `Player 1 attempts to summon card`,
-            cardId,
-            processed: false,
-          });
+          const card = getCardById(cardId);
+          if (card && card.cardType === "monster") {
+            onAction({
+              id: `summon_${Date.now()}`,
+              playerId: "player1",
+              actionType: "normal_summon",
+              timestamp: new Date().toISOString(),
+              description: `Player 1 attempts to summon ${card.name}`,
+              cardId,
+              processed: false,
+            });
+          }
+        }
+      }
+
+      if (
+        input === "c" &&
+        isPlayerTurn &&
+        (gameState.currentPhase === "main1" ||
+          gameState.currentPhase === "main2")
+      ) {
+        // Cast/Activate selected spell card
+        const cardId = currentPlayer.hand[selectedHandIndex];
+        if (cardId) {
+          const card = getCardById(cardId);
+          if (card && card.cardType === "spell") {
+            onAction({
+              id: `spell_${Date.now()}`,
+              playerId: "player1",
+              actionType: "activate_spell",
+              timestamp: new Date().toISOString(),
+              description: `Player 1 activates spell ${card.name}`,
+              cardId,
+              processed: false,
+            });
+          }
+        }
+      }
+
+      if (
+        input === "t" &&
+        isPlayerTurn &&
+        viewMode === "hand" &&
+        (gameState.currentPhase === "main1" ||
+          gameState.currentPhase === "main2")
+      ) {
+        // Set selected trap card face-down
+        const cardId = currentPlayer.hand[selectedHandIndex];
+        if (cardId) {
+          const card = getCardById(cardId);
+          if (card && card.cardType === "trap") {
+            onAction({
+              id: `trap_${Date.now()}`,
+              playerId: "player1",
+              actionType: "set_spell_trap",
+              timestamp: new Date().toISOString(),
+              description: `Player 1 sets trap ${card.name}`,
+              cardId,
+              processed: false,
+            });
+          }
         }
       }
     }
 
-    // Game actions
+    // Game actions - chỉ gửi action, AI sẽ xử lý logic
     if (isPlayerTurn) {
       if (input === "n") {
         // Next phase
@@ -86,6 +140,21 @@ export const GameScreen: React.FC<GameScreenProps> = ({
           processed: false,
         });
       }
+
+      // Thêm các actions khác
+      if (input === "a" && gameState.currentPhase === "battle") {
+        // Attack action - AI sẽ xử lý logic tấn công
+        onAction({
+          id: `attack_${Date.now()}`,
+          playerId: "player1",
+          actionType: "declare_attack",
+          timestamp: new Date().toISOString(),
+          description: "Player 1 declares attack",
+          processed: false,
+        });
+      }
+
+      // Removed duplicate set trap action - only use the one in hand view with cardId
     }
   });
 
@@ -100,16 +169,29 @@ export const GameScreen: React.FC<GameScreenProps> = ({
         <Text color="white" bold>
           Yu-Gi-Oh! AI Duel
         </Text>
+        <Text color="magenta">
+          {" "}
+          | Turn {gameState.turnNumber} | {gameState.currentPhase.toUpperCase()}
+        </Text>
       </Box>
 
       <Box>
         <Text color={isPlayerTurn ? "green" : "red"}>
           {isPlayerTurn ? "YOUR TURN" : "AI TURN"}
+          {isWaitingForAI && <Text color="yellow"> ⏳ AI Processing...</Text>}
         </Text>
       </Box>
 
       <Box>
-        <Text color="cyan">Views: [1]Board [2]Hand [3]Log [4]Help</Text>
+        <Text color="cyan">
+          Views: [1]Board [2]Hand [3]Log [4]Help |
+          {isPlayerTurn && gameState.currentPhase === "battle" && " [A]Attack"}
+          {isPlayerTurn &&
+            (gameState.currentPhase === "main1" ||
+              gameState.currentPhase === "main2") &&
+            " [C]Spell"}
+          {isPlayerTurn && " [N]Next"}
+        </Text>
       </Box>
     </Box>
   );
@@ -174,11 +256,19 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
       <Box marginTop={2}>
         <Text color="yellow" bold>
-          Game Actions:
+          Game Actions (AI-Driven):
         </Text>
       </Box>
       <Text color="white">• [N] - Advance to Next Phase</Text>
-      <Text color="white">• [S] - Summon Selected Card (in Hand view)</Text>
+      <Text color="white">• [S] - Summon Selected Monster (in Hand view)</Text>
+      <Text color="white">
+        • [C] - Cast Selected Spell (in Hand view, Main Phase)
+      </Text>
+      <Text color="white">
+        • [T] - Set Selected Trap (in Hand view, Main Phase)
+      </Text>
+      <Text color="white">• [A] - Declare Attack (Battle Phase)</Text>
+      <Text color="cyan"> ⚡ All actions processed by AI logic!</Text>
 
       <Box marginTop={2}>
         <Text color="yellow" bold>
@@ -187,7 +277,8 @@ export const GameScreen: React.FC<GameScreenProps> = ({
       </Box>
       <Text color="white">• [←→] - Navigate through cards</Text>
       <Text color="white">• [D] - Toggle card details</Text>
-      <Text color="white">• [S] - Summon selected card</Text>
+      <Text color="white">• [S] - Summon selected monster</Text>
+      <Text color="white">• [C] - Cast selected spell (Main Phase)</Text>
 
       <Box marginTop={2}>
         <Text color="yellow" bold>
@@ -222,7 +313,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
           />
         );
       case "log":
-        return <GameLog gameLog={gameState.gameLog} />;
+        return <GameLog />;
       case "help":
         return renderHelpScreen();
       default:

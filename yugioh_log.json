@@ -1,0 +1,67 @@
+{
+  "gameId": "yugioh_1752375333338",
+  "createdAt": "2025-07-13T02:55:33.338Z",
+  "entries": [
+    {
+      "id": "log_1752375333338",
+      "timestamp": "2025-07-13T02:55:33.338Z",
+      "type": "game_start",
+      "message": "🎮 Yu-Gi-Oh AI Game Started",
+      "playerId": "system",
+      "details": {
+        "gameMode": "AI vs Player",
+        "version": "2.0.0"
+      }
+    },
+    {
+      "id": "log_1752375343683",
+      "timestamp": "2025-07-13T02:55:43.683Z",
+      "type": "player_action",
+      "message": "Player 1 advances phase",
+      "playerId": "player1",
+      "actionType": "advance_phase",
+      "details": {
+        "actionId": "phase_1752375343661"
+      }
+    },
+    {
+      "id": "log_1752375442693",
+      "timestamp": "2025-07-13T02:57:22.693Z",
+      "type": "player_action",
+      "message": "Player 1 advances phase",
+      "playerId": "player1",
+      "actionType": "advance_phase",
+      "details": {
+        "actionId": "phase_1752375442683"
+      }
+    },
+    {
+      "id": "log_1752375472962",
+      "timestamp": "2025-07-13T02:57:52.962Z",
+      "type": "player_action",
+      "message": "Player 1 attempts to summon Mystical Elf",
+      "playerId": "player1",
+      "actionType": "normal_summon",
+      "cardId": "mystical_elf",
+      "details": {
+        "actionId": "summon_1752375472953"
+      }
+    },
+    {
+      "id": "log_1752375523417",
+      "timestamp": "2025-07-13T02:58:43.417Z",
+      "type": "player_action",
+      "message": "Player 1 sets spell/trap",
+      "playerId": "player1",
+      "actionType": "set_spell_trap",
+      "details": {
+        "actionId": "set_1752375523406"
+      }
+    }
+  ]
+}details": {
+        "actionId": "trap_1752375523404"
+      }
+    }
+  ]
+}

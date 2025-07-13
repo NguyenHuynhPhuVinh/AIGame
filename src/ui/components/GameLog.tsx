@@ -1,19 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Text } from "ink";
-import { GameAction } from "../../database/index.js";
+import fs from "fs/promises";
+import path from "path";
+
+interface LogEntry {
+  id: string;
+  timestamp: string;
+  type: string;
+  message: string;
+  playerId: string;
+  actionType?: string;
+  details?: any;
+}
 
 interface GameLogProps {
-  gameLog: GameAction[];
   maxEntries?: number;
 }
 
-export const GameLog: React.FC<GameLogProps> = ({
-  gameLog,
-  maxEntries = 10,
-}) => {
-  const recentLogs = gameLog.slice(-maxEntries);
+const GAME_LOG_FILE = path.join(process.cwd(), "yugioh_log.json");
 
-  const getActionColor = (actionType: string): string => {
+export const GameLog: React.FC<GameLogProps> = ({ maxEntries = 10 }) => {
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadGameLog = async () => {
+      try {
+        const data = await fs.readFile(GAME_LOG_FILE, "utf-8");
+        const gameLog = JSON.parse(data);
+        setLogEntries(gameLog.entries || []);
+      } catch (error) {
+        console.error("Error loading game log:", error);
+        setLogEntries([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadGameLog();
+
+    // Watch for log file changes
+    const interval = setInterval(loadGameLog, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const recentLogs = logEntries.slice(-maxEntries);
+
+  const getActionColor = (actionType?: string): string => {
+    if (!actionType) return "white";
+
     switch (actionType) {
       case "normal_summon":
       case "set_monster":
@@ -21,6 +56,7 @@ export const GameLog: React.FC<GameLogProps> = ({
         return "blue";
       case "direct_attack":
       case "monster_battle":
+      case "declare_attack":
         return "red";
       case "draw_card":
         return "green";
@@ -35,7 +71,9 @@ export const GameLog: React.FC<GameLogProps> = ({
     }
   };
 
-  const getActionIcon = (actionType: string): string => {
+  const getActionIcon = (actionType?: string): string => {
+    if (!actionType) return "📝";
+
     switch (actionType) {
       case "normal_summon":
         return "🔮";
@@ -44,6 +82,7 @@ export const GameLog: React.FC<GameLogProps> = ({
       case "flip_summon":
         return "🔄";
       case "direct_attack":
+      case "declare_attack":
         return "⚔️";
       case "monster_battle":
         return "⚡";
@@ -54,11 +93,18 @@ export const GameLog: React.FC<GameLogProps> = ({
       case "activate_spell":
         return "✨";
       case "activate_trap":
+      case "set_spell_trap":
         return "🪤";
       case "tribute":
         return "💀";
       case "change_position":
         return "🔄";
+      case "game_start":
+        return "🎮";
+      case "ai_decision":
+        return "🤖";
+      case "spell_effect":
+        return "💫";
       default:
         return "📝";
     }
@@ -106,24 +152,30 @@ export const GameLog: React.FC<GameLogProps> = ({
                 <Text>{getActionIcon(log.actionType)}</Text>
               </Box>
 
-              <Box flexGrow={1}>
-                <Text color={getActionColor(log.actionType)}>
-                  {log.description}
+              <Box width={10}>
+                <Text color="cyan" bold>
+                  {log.playerId}
                 </Text>
               </Box>
 
-              {log.damage && (
+              <Box flexGrow={1}>
+                <Text color={getActionColor(log.actionType)}>
+                  {log.message}
+                </Text>
+              </Box>
+
+              {log.details?.damage && (
                 <Box width={12} justifyContent="flex-end">
                   <Text color="red" bold>
-                    -{log.damage} LP
+                    -{log.details.damage} LP
                   </Text>
                 </Box>
               )}
 
-              {log.heal && (
+              {log.details?.heal && (
                 <Box width={12} justifyContent="flex-end">
                   <Text color="green" bold>
-                    +{log.heal} LP
+                    +{log.details.heal} LP
                   </Text>
                 </Box>
               )}
@@ -132,10 +184,10 @@ export const GameLog: React.FC<GameLogProps> = ({
         )}
       </Box>
 
-      {gameLog.length > maxEntries && (
+      {logEntries.length > maxEntries && (
         <Box justifyContent="center">
           <Text color="gray" dimColor>
-            ... and {gameLog.length - maxEntries} more actions
+            ... and {logEntries.length - maxEntries} more entries
           </Text>
         </Box>
       )}

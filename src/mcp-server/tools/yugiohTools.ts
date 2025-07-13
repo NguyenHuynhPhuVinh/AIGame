@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import fs from "fs/promises";
+import fsSync from "fs";
 import path from "path";
 import {
   GameState,
@@ -13,6 +14,11 @@ import { YuGiOhGameEngine } from "../../game-engine/index.js";
 
 const GAME_ACTION_FILE = path.join(process.cwd(), "yugioh_action.json");
 const GAME_STATE_FILE = path.join(process.cwd(), "yugioh_state.json");
+const GAME_LOG_FILE = path.join(process.cwd(), "yugioh_log.json");
+
+// Global file watcher state
+let actionFileWatcher: any = null;
+let isWatchingActions = false;
 
 export function registerYuGiOhTools(server: McpServer) {
   // Tool 1: Read player action from JSON
@@ -482,6 +488,253 @@ TRAP CARDS:
           },
         ],
       };
+    }
+  );
+
+  // Tool 8: Read game log
+  server.tool(
+    "readYuGiOhGameLog",
+    "📜 Read Yu-Gi-Oh game log from yugioh_log.json file",
+    {
+      limit: z
+        .number()
+        .optional()
+        .describe("Number of recent entries to return (default: 20)"),
+      playerId: z.string().optional().describe("Filter by specific player ID"),
+      actionType: z
+        .string()
+        .optional()
+        .describe("Filter by specific action type"),
+    },
+    async ({ limit = 20, playerId, actionType }) => {
+      try {
+        const data = await fs.readFile(GAME_LOG_FILE, "utf-8");
+        const gameLog = JSON.parse(data);
+
+        let entries = gameLog.entries || [];
+
+        // Apply filters
+        if (playerId) {
+          entries = entries.filter((entry: any) => entry.playerId === playerId);
+        }
+        if (actionType) {
+          entries = entries.filter(
+            (entry: any) => entry.actionType === actionType
+          );
+        }
+
+        // Get recent entries
+        const recentEntries = entries.slice(-limit);
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `📜 Yu-Gi-Oh Game Log (${
+                recentEntries.length
+              } entries):\n\n${recentEntries
+                .map(
+                  (entry: any) =>
+                    `[${entry.timestamp}] ${entry.playerId}: ${entry.message}${
+                      entry.actionType ? ` (${entry.actionType})` : ""
+                    }`
+                )
+                .join("\n")}\n\nTotal entries in log: ${entries.length}`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "📭 No game log available or error reading log.",
+            },
+          ],
+        };
+      }
+    }
+  );
+
+  // Tool 9: Add entry to game log
+  server.tool(
+    "addYuGiOhLogEntry",
+    "📝 Add entry to Yu-Gi-Oh game log",
+    {
+      message: z.string().describe("Log message"),
+      type: z
+        .string()
+        .describe(
+          "Log entry type (e.g., 'ai_decision', 'game_event', 'spell_effect')"
+        ),
+      playerId: z.string().describe("Player ID (player1, player2, or system)"),
+      details: z
+        .object({})
+        .passthrough()
+        .optional()
+        .describe("Additional details object"),
+    },
+    async ({ message, type, playerId, details = {} }) => {
+      try {
+        const data = await fs.readFile(GAME_LOG_FILE, "utf-8");
+        const gameLog = JSON.parse(data);
+
+        const logEntry = {
+          id: `log_${Date.now()}`,
+          timestamp: new Date().toISOString(),
+          type,
+          message,
+          playerId,
+          details,
+        };
+
+        gameLog.entries.push(logEntry);
+
+        await fs.writeFile(
+          GAME_LOG_FILE,
+          JSON.stringify(gameLog, null, 2),
+          "utf-8"
+        );
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ Log entry added successfully!\n\n📝 Entry: ${message}\n🏷️ Type: ${type}\n👤 Player: ${playerId}`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ Error adding log entry: ${(error as Error).message}`,
+            },
+          ],
+        };
+      }
+    }
+  );
+
+  // Tool 10: Wait for new actions (BLOCKING FOREVER - no timeout)
+  server.tool(
+    "waitForYuGiOhAction",
+    "⏳ Wait for next Yu-Gi-Oh action (BLOCKS FOREVER until action arrives)",
+    {},
+    async () => {
+      return new Promise((resolve) => {
+        let lastModified = 0;
+
+        // Get initial file state
+        try {
+          const stats = fsSync.statSync(GAME_ACTION_FILE);
+          lastModified = stats.mtime.getTime();
+
+          // Check if there's already an unprocessed action
+          const data = fsSync.readFileSync(GAME_ACTION_FILE, "utf-8");
+          const action = JSON.parse(data);
+          if (!action.processed) {
+            resolve({
+              content: [
+                {
+                  type: "text",
+                  text: `📥 EXISTING UNPROCESSED ACTION:\n\n${JSON.stringify(
+                    action,
+                    null,
+                    2
+                  )}\n\n⚡ Process this action immediately!`,
+                },
+              ],
+            });
+            return;
+          }
+        } catch (error) {
+          // File doesn't exist yet, that's okay
+        }
+
+        // Watch for file changes FOREVER (no timeout)
+        fsSync.watchFile(
+          GAME_ACTION_FILE,
+          { interval: 500 },
+          async (curr, prev) => {
+            if (curr.mtime.getTime() > lastModified) {
+              try {
+                const data = await fs.readFile(GAME_ACTION_FILE, "utf-8");
+                const action = JSON.parse(data);
+
+                if (!action.processed) {
+                  // Stop watching and resolve
+                  fsSync.unwatchFile(GAME_ACTION_FILE);
+
+                  resolve({
+                    content: [
+                      {
+                        type: "text",
+                        text: `🚨 NEW ACTION RECEIVED!\n\n📥 Action Details:\n${JSON.stringify(
+                          action,
+                          null,
+                          2
+                        )}\n\n⚡ Process this action now with processYuGiOhAction!\n\n🔄 After processing, call waitForYuGiOhAction again to wait for next action.`,
+                      },
+                    ],
+                  });
+                }
+              } catch (error) {
+                // Error reading file, continue watching
+              }
+            }
+          }
+        );
+
+        // NO TIMEOUT - AI will wait forever until action arrives!
+      });
+    }
+  );
+
+  // Tool 11: Check for pending actions (non-blocking)
+  server.tool(
+    "checkYuGiOhPendingActions",
+    "🔍 Check if there are any pending Yu-Gi-Oh actions to process",
+    {},
+    async () => {
+      try {
+        const data = await fs.readFile(GAME_ACTION_FILE, "utf-8");
+        const action = JSON.parse(data);
+
+        if (!action.processed) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `📋 PENDING ACTION FOUND:\n\n${JSON.stringify(
+                  action,
+                  null,
+                  2
+                )}\n\n⚡ Use processYuGiOhAction to handle this!`,
+              },
+            ],
+          };
+        } else {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "✅ No pending actions. All actions have been processed.",
+              },
+            ],
+          };
+        }
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "📭 No action file found. Waiting for player actions...",
+            },
+          ],
+        };
+      }
     }
   );
 }

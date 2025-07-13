@@ -8,43 +8,42 @@ interface YuGiOhUIProps {
   initialGameState?: GameState;
   onGameAction?: (action: any) => void;
   onExit?: () => void;
+  onStateUpdate?: (callback: (gameState: GameState) => void) => void;
 }
 
 const YuGiOhUI: React.FC<YuGiOhUIProps> = ({
   initialGameState,
   onGameAction,
   onExit,
+  onStateUpdate,
 }) => {
   const [gameEngine] = useState(() => new YuGiOhGameEngine(initialGameState));
   const [gameState, setGameState] = useState<GameState>(
     gameEngine.getGameState()
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [lastAction, setLastAction] = useState<string>("");
 
   const handleAction = async (action: any) => {
     setIsLoading(true);
+    setLastAction(action.description || action.actionType);
 
     try {
-      // Process action through game engine
-      const result = gameEngine.processAction(action);
+      console.log(
+        "🎮 UI: Sending action to AI for processing:",
+        action.actionType
+      );
 
-      if (result.success) {
-        // Update local state
-        setGameState({ ...gameEngine.getGameState() });
-
-        // Notify parent component
-        if (onGameAction) {
-          onGameAction(action);
-        }
-      } else {
-        // Handle error - could show notification
-        console.error("Action failed:", result.message);
+      // UI chỉ gửi action, không xử lý logic
+      // Tất cả logic sẽ được AI xử lý thông qua MCP tools
+      if (onGameAction) {
+        onGameAction(action);
       }
     } catch (error) {
-      console.error("Error processing action:", error);
-    } finally {
+      console.error("Error sending action:", error);
       setIsLoading(false);
     }
+    // Không setIsLoading(false) ở đây - sẽ được clear khi AI response
   };
 
   const handleExit = () => {
@@ -55,7 +54,19 @@ const YuGiOhUI: React.FC<YuGiOhUIProps> = ({
     }
   };
 
-  // Update game state when external state changes
+  // Register state update callback with parent
+  useEffect(() => {
+    if (onStateUpdate) {
+      onStateUpdate((newGameState: GameState) => {
+        console.log("🔄 UI: Received state update from file watcher");
+        gameEngine.updateGameState(newGameState);
+        setGameState({ ...newGameState });
+        setIsLoading(false); // Clear loading state when AI responds
+      });
+    }
+  }, [onStateUpdate, gameEngine]);
+
+  // Update game state when external state changes (initial load)
   useEffect(() => {
     if (initialGameState) {
       gameEngine.updateGameState(initialGameState);
@@ -65,8 +76,24 @@ const YuGiOhUI: React.FC<YuGiOhUIProps> = ({
 
   if (isLoading) {
     return (
-      <Box justifyContent="center" alignItems="center" height="100%">
-        <Text color="yellow">⏳ Processing action...</Text>
+      <Box
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+      >
+        <Text color="yellow" bold>
+          🤖 AI đang xử lý...
+        </Text>
+        <Text color="cyan">Action: {lastAction}</Text>
+        <Text color="gray" italic>
+          Vui lòng chờ AI phân tích và thực hiện logic game
+        </Text>
+        <Box marginTop={1}>
+          <Text color="white">
+            ⚡ Tất cả game logic được AI quản lý hoàn toàn
+          </Text>
+        </Box>
       </Box>
     );
   }
@@ -76,6 +103,7 @@ const YuGiOhUI: React.FC<YuGiOhUIProps> = ({
       gameState={gameState}
       onAction={handleAction}
       onExit={handleExit}
+      isWaitingForAI={isLoading}
     />
   );
 };
