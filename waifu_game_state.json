@@ -1,0 +1,87 @@
+{
+  "gameId": "waifu_1752378970746",
+  "status": "playing",
+  "currentPlayer": "player1",
+  "turnNumber": 1,
+  "phase": "draw",
+  "players": {
+    "player1": {
+      "id": "player1",
+      "name": "AI Player 1",
+      "hp": 20,
+      "mana": 1,
+      "maxMana": 1,
+      "deck": [
+        "rei_kuudere",
+        "yuki_tsundere",
+        "miku_maid",
+        "akane_genki",
+        "yuki_tsundere",
+        "yui_imouto",
+        "megumi_oneesan",
+        "ayame_ojousama",
+        "sakura_chan",
+        "sakura_chan",
+        "yui_imouto",
+        "yandere_yuno",
+        "yuki_tsundere",
+        "goddess_ai"
+      ],
+      "hand": [
+        "miku_maid",
+        "miku_maid",
+        "sakura_chan",
+        "akane_genki",
+        "rei_kuudere"
+      ],
+      "field": [],
+      "graveyard": []
+    },
+    "player2": {
+      "id": "player2",
+      "name": "AI Player 2",
+      "hp": 20,
+      "mana": 1,
+      "maxMana": 1,
+      "deck": [
+        "megumi_oneesan",
+        "ayame_ojousama",
+        "yui_imouto",
+        "miku_maid",
+        "miku_maid",
+        "rei_kuudere",
+        "goddess_ai",
+        "yandere_yuno",
+        "sakura_chan",
+        "sakura_chan",
+        "miku_maid",
+        "rei_kuudere",
+        "yuki_tsundere",
+        "yuki_tsundere"
+      ],
+      "hand": [
+        "yuki_tsundere",
+        "sakura_chan",
+        "akane_genki",
+        "yui_imouto",
+        "akane_genki"
+      ],
+      "field": [],
+      "graveyard": []
+    }
+  },
+  "gameLog": [
+    {
+      "id": "log_1752378970746_1za0dxdwj",
+      "timestamp": "2025-07-13T03:56:10.746Z",
+      "playerId": "system",
+      "action": "game_start",
+      "description": "🎴 Pure MCP Waifu Card Game Started - AI vs AI",
+      "details": {
+        "gameMode": "AI_SELF_PLAY"
+      }
+    }
+  ],
+  "createdAt": "2025-07-13T03:56:10.746Z",
+  "lastAction": "🎴 Pure MCP Waifu Card Game Started - AI vs AI"
+}

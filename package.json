@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "Pure MCP Waifu Card Game - AI tự chơi 100% qua MCP tools",
   "type": "module",
-  "main": "build/mcp.js",
+  "main": "build/mcp/server.js",
   "bin": {
-    "waifu-mcp": "./build/mcp.js"
+    "waifu-mcp": "./build/mcp/server.js"
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/mcp.ts",
-    "start": "node build/mcp.js",
-    "init-game": "node build/init-game.js"
+    "dev": "tsx watch src/mcp/server.ts",
+    "start": "node build/mcp/server.js",
+    "init-game": "node build/game/init.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.2",
@@ -22,7 +22,13 @@
     "tsx": "^4.19.2",
     "typescript": "^5.8.3"
   },
-  "keywords": ["mcp", "ai", "card-game", "waifu", "anime"],
+  "keywords": [
+    "mcp",
+    "ai",
+    "card-game",
+    "waifu",
+    "anime"
+  ],
   "author": "AI Assistant",
   "license": "MIT"
 }
