@@ -1,5 +1,5 @@
 {
-  "gameId": "waifu_1752378970746",
+  "gameId": "waifu_1752379748291",
   "status": "playing",
   "currentPlayer": "player1",
   "turnNumber": 1,
@@ -12,27 +12,27 @@
       "mana": 1,
       "maxMana": 1,
       "deck": [
-        "rei_kuudere",
         "yuki_tsundere",
-        "miku_maid",
-        "akane_genki",
-        "yuki_tsundere",
-        "yui_imouto",
-        "megumi_oneesan",
         "ayame_ojousama",
         "sakura_chan",
-        "sakura_chan",
-        "yui_imouto",
         "yandere_yuno",
+        "yui_imouto",
+        "goddess_ai",
         "yuki_tsundere",
-        "goddess_ai"
+        "sakura_chan",
+        "miku_maid",
+        "miku_maid",
+        "rei_kuudere",
+        "akane_genki",
+        "sakura_chan",
+        "rei_kuudere"
       ],
       "hand": [
         "miku_maid",
-        "miku_maid",
-        "sakura_chan",
-        "akane_genki",
-        "rei_kuudere"
+        "yui_imouto",
+        "yuki_tsundere",
+        "megumi_oneesan",
+        "akane_genki"
       ],
       "field": [],
       "graveyard": []
@@ -44,27 +44,27 @@
       "mana": 1,
       "maxMana": 1,
       "deck": [
-        "megumi_oneesan",
-        "ayame_ojousama",
-        "yui_imouto",
-        "miku_maid",
         "miku_maid",
         "rei_kuudere",
-        "goddess_ai",
-        "yandere_yuno",
-        "sakura_chan",
         "sakura_chan",
         "miku_maid",
-        "rei_kuudere",
+        "miku_maid",
+        "akane_genki",
         "yuki_tsundere",
-        "yuki_tsundere"
+        "yui_imouto",
+        "sakura_chan",
+        "ayame_ojousama",
+        "yuki_tsundere",
+        "megumi_oneesan",
+        "sakura_chan",
+        "rei_kuudere"
       ],
       "hand": [
-        "yuki_tsundere",
-        "sakura_chan",
         "akane_genki",
-        "yui_imouto",
-        "akane_genki"
+        "yuki_tsundere",
+        "goddess_ai",
+        "yandere_yuno",
+        "yui_imouto"
       ],
       "field": [],
       "graveyard": []
@@ -72,8 +72,8 @@
   },
   "gameLog": [
     {
-      "id": "log_1752378970746_1za0dxdwj",
-      "timestamp": "2025-07-13T03:56:10.746Z",
+      "id": "log_1752379748291_81bgym49n",
+      "timestamp": "2025-07-13T04:09:08.291Z",
       "playerId": "system",
       "action": "game_start",
       "description": "🎴 Pure MCP Waifu Card Game Started - AI vs AI",
@@ -82,6 +82,6 @@
       }
     }
   ],
-  "createdAt": "2025-07-13T03:56:10.746Z",
+  "createdAt": "2025-07-13T04:09:08.290Z",
   "lastAction": "🎴 Pure MCP Waifu Card Game Started - AI vs AI"
 }

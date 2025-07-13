@@ -3,6 +3,8 @@ import {
   PlayerState,
   PlayerId,
   WaifuInstance,
+  SummonResult,
+  CombatResult,
 } from "../types/game.js";
 import { getCardById } from "../data/cards.js";
 import {
@@ -101,26 +103,59 @@ export class WaifuGameEngine {
     return true;
   }
 
-  // Summon waifu logic
+  // Summon waifu logic with improved validation and error handling
   static summonWaifu(
     gameState: GameState,
     playerId: PlayerId,
     cardId: string
-  ): boolean {
-    if (gameState.currentPlayer !== playerId || gameState.phase !== "main") {
-      return false;
+  ): SummonResult {
+    const result: SummonResult = {
+      success: false,
+      waifusOnField: 0,
+      maxFieldSize: 5,
+      error: undefined,
+    };
+
+    // Validate turn
+    if (gameState.currentPlayer !== playerId) {
+      result.error = `Not ${playerId}'s turn! Current player: ${gameState.currentPlayer}`;
+      return result;
+    }
+
+    // Validate phase
+    if (gameState.phase !== "main") {
+      result.error = `Can only summon during main phase! Current phase: ${gameState.phase}`;
+      return result;
     }
 
     const player = gameState.players[playerId];
     const card = getCardById(cardId);
 
-    if (!card) return false;
+    // Validate card exists
+    if (!card) {
+      result.error = `Card "${cardId}" not found in database!`;
+      return result;
+    }
 
-    // Validate summon
+    // Validate card in hand
     const handIndex = player.hand.indexOf(cardId);
-    if (handIndex === -1) return false;
-    if (player.mana < card.cost) return false;
-    if (player.field.length >= 5) return false;
+    if (handIndex === -1) {
+      result.error = `Card "${card.name}" not in ${player.name}'s hand!`;
+      return result;
+    }
+
+    // Validate mana cost
+    if (player.mana < card.cost) {
+      result.error = `Not enough mana! Need ${card.cost}, have ${player.mana}`;
+      return result;
+    }
+
+    // Validate field space
+    if (player.field.length >= 5) {
+      result.error = `Field is full! Maximum 5 waifus on field. Current: ${player.field.length}`;
+      result.waifusOnField = player.field.length;
+      return result;
+    }
 
     // Perform summon
     player.hand.splice(handIndex, 1);
@@ -129,19 +164,27 @@ export class WaifuGameEngine {
     const waifuInstance = createWaifuInstance(cardId);
     player.field.push(waifuInstance);
 
+    // Update result
+    result.success = true;
+    result.waifusOnField = player.field.length;
+    result.instanceId = waifuInstance.instanceId;
+
     addGameLogEntry(
       gameState,
       playerId,
       "summon",
-      `${player.name} summoned ${card.name}`,
+      `${player.name} summoned ${card.name} (${player.field.length}/5 on field)`,
       {
         cardId: card.id,
         cost: card.cost,
         stats: `${card.attack}/${card.defense}/${card.charm}`,
+        fieldPosition: player.field.length - 1,
+        waifusOnField: player.field.length,
+        instanceId: waifuInstance.instanceId,
       }
     );
 
-    return true;
+    return result;
   }
 
   // Battle phase logic
@@ -218,10 +261,12 @@ export class WaifuGameEngine {
       const targetCard = getCardById(target.cardId);
       if (!targetCard) return false;
 
-      // Calculate battle
+      // Calculate battle with detailed combat mechanics
       const battleResult = calculateBattle(
         attacker.currentAttack,
-        target.currentDefense
+        target.currentDefense,
+        attackerCard.name,
+        targetCard.name
       );
 
       if (battleResult.type === "attacker_wins") {
@@ -233,10 +278,15 @@ export class WaifuGameEngine {
           gameState,
           playerId,
           "waifu_battle",
-          `${attackerCard.name} destroyed ${targetCard.name}`,
+          battleResult.description,
           {
+            attackerName: attackerCard.name,
+            defenderName: targetCard.name,
+            attackerAttack: attacker.currentAttack,
+            defenderDefense: target.currentDefense,
             damage: battleResult.damage,
             opponentHP: opponent.hp,
+            result: "attacker_wins",
           }
         );
       } else if (battleResult.type === "defender_wins") {
@@ -248,10 +298,15 @@ export class WaifuGameEngine {
           gameState,
           playerId,
           "waifu_battle",
-          `${targetCard.name} destroyed ${attackerCard.name}`,
+          battleResult.description,
           {
+            attackerName: attackerCard.name,
+            defenderName: targetCard.name,
+            attackerAttack: attacker.currentAttack,
+            defenderDefense: target.currentDefense,
             damage: battleResult.damage,
             playerHP: player.hp,
+            result: "defender_wins",
           }
         );
       } else {
@@ -265,7 +320,14 @@ export class WaifuGameEngine {
           gameState,
           playerId,
           "waifu_battle",
-          `${attackerCard.name} and ${targetCard.name} destroyed each other`
+          battleResult.description,
+          {
+            attackerName: attackerCard.name,
+            defenderName: targetCard.name,
+            attackerAttack: attacker.currentAttack,
+            defenderDefense: target.currentDefense,
+            result: "tie",
+          }
         );
       }
 

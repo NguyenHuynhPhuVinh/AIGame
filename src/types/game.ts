@@ -7,10 +7,20 @@ export interface WaifuCard {
   defense: number;
   charm: number;
   cost: number;
-  rarity: 'common' | 'rare' | 'super_rare' | 'ultra_rare' | 'legendary';
+  rarity: "common" | "rare" | "super_rare" | "ultra_rare" | "legendary";
   description: string;
   flavorText: string;
-  waifuType: 'dandere' | 'tsundere' | 'kuudere' | 'yandere' | 'genki' | 'imouto' | 'oneesan' | 'ojousama' | 'maid' | 'idol';
+  waifuType:
+    | "dandere"
+    | "tsundere"
+    | "kuudere"
+    | "yandere"
+    | "genki"
+    | "imouto"
+    | "oneesan"
+    | "ojousama"
+    | "maid"
+    | "idol";
 }
 
 export interface WaifuInstance {
@@ -26,14 +36,14 @@ export interface WaifuInstance {
 export interface WaifuBuff {
   id: string;
   name: string;
-  type: 'attack' | 'defense' | 'charm';
+  type: "attack" | "defense" | "charm";
   value: number;
   duration: number; // -1 for permanent
   source: string;
 }
 
 export interface PlayerState {
-  id: 'player1' | 'player2';
+  id: "player1" | "player2";
   name: string;
   hp: number;
   mana: number;
@@ -46,15 +56,15 @@ export interface PlayerState {
 
 export interface GameState {
   gameId: string;
-  status: 'waiting' | 'playing' | 'finished';
-  currentPlayer: 'player1' | 'player2';
+  status: "waiting" | "playing" | "finished";
+  currentPlayer: "player1" | "player2";
   turnNumber: number;
-  phase: 'draw' | 'main' | 'battle' | 'end';
+  phase: "draw" | "main" | "battle" | "end";
   players: {
     player1: PlayerState;
     player2: PlayerState;
   };
-  winner?: 'player1' | 'player2';
+  winner?: "player1" | "player2";
   gameLog: GameLogEntry[];
   createdAt: string;
   lastAction: string;
@@ -69,19 +79,19 @@ export interface GameLogEntry {
   details: any;
 }
 
-export type GamePhase = 'draw' | 'main' | 'battle' | 'end';
-export type PlayerId = 'player1' | 'player2';
-export type AttackTarget = 'player' | 'waifu';
+export type GamePhase = "draw" | "main" | "battle" | "end";
+export type PlayerId = "player1" | "player2";
+export type AttackTarget = "player" | "waifu";
 
 // Game Actions
 export interface SummonAction {
-  type: 'summon';
+  type: "summon";
   playerId: PlayerId;
   cardId: string;
 }
 
 export interface AttackAction {
-  type: 'attack';
+  type: "attack";
   playerId: PlayerId;
   attackerIndex: number;
   targetType: AttackTarget;
@@ -89,8 +99,32 @@ export interface AttackAction {
 }
 
 export interface PhaseAction {
-  type: 'advance_phase';
+  type: "advance_phase";
   playerId: PlayerId;
 }
 
 export type GameAction = SummonAction | AttackAction | PhaseAction;
+
+// Game Results & Responses
+export interface SummonResult {
+  success: boolean;
+  waifusOnField: number;
+  maxFieldSize: number;
+  error?: string;
+  instanceId?: string;
+}
+
+export interface CombatResult {
+  attackerDamage: number;
+  defenderDamage: number;
+  attackerSurvived: boolean;
+  defenderSurvived: boolean;
+  directPlayerDamage?: number;
+  description: string;
+}
+
+export interface GameError {
+  code: string;
+  message: string;
+  suggestion: string;
+}
