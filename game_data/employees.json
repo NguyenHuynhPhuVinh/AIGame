@@ -1,0 +1,62 @@
+[
+  {
+    "id": "emp_1752383942937_kkps0hemx",
+    "name": "Jordan Brown",
+    "role": "programmer",
+    "skills": {
+      "programming": 74,
+      "design": 67,
+      "art": 35,
+      "sound": 56,
+      "testing": 56,
+      "management": 44,
+      "marketing": 39
+    },
+    "salary": 57654,
+    "happiness": 84,
+    "productivity": 80,
+    "experience": 2,
+    "hiredDate": "2025-07-13T05:19:02.937Z",
+    "traits": []
+  },
+  {
+    "id": "emp_1752383942937_vwr7ivyhv",
+    "name": "Skyler Wilson",
+    "role": "designer",
+    "skills": {
+      "programming": 37,
+      "design": 75,
+      "art": 69,
+      "sound": 60,
+      "testing": 45,
+      "management": 41,
+      "marketing": 45
+    },
+    "salary": 50661,
+    "happiness": 79,
+    "productivity": 76,
+    "experience": 3,
+    "hiredDate": "2025-07-13T05:19:02.937Z",
+    "traits": []
+  },
+  {
+    "id": "emp_1752383942937_nzzqxlmdp",
+    "name": "River Thomas",
+    "role": "artist",
+    "skills": {
+      "programming": 37,
+      "design": 58,
+      "art": 72,
+      "sound": 59,
+      "testing": 30,
+      "management": 44,
+      "marketing": 29
+    },
+    "salary": 59939,
+    "happiness": 87,
+    "productivity": 76,
+    "experience": 2,
+    "hiredDate": "2025-07-13T05:19:02.937Z",
+    "traits": []
+  }
+]

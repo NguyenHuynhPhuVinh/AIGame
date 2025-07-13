@@ -1,0 +1,92 @@
+[
+  {
+    "genre": "action",
+    "platform": "pc",
+    "demand": 75,
+    "competition": 80,
+    "trendDirection": "stable",
+    "averagePrice": 59.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "rpg",
+    "platform": "pc",
+    "demand": 70,
+    "competition": 60,
+    "trendDirection": "rising",
+    "averagePrice": 49.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "strategy",
+    "platform": "pc",
+    "demand": 65,
+    "competition": 50,
+    "trendDirection": "stable",
+    "averagePrice": 39.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "indie",
+    "platform": "pc",
+    "demand": 80,
+    "competition": 90,
+    "trendDirection": "rising",
+    "averagePrice": 19.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "puzzle",
+    "platform": "mobile",
+    "demand": 85,
+    "competition": 95,
+    "trendDirection": "stable",
+    "averagePrice": 2.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "action",
+    "platform": "mobile",
+    "demand": 90,
+    "competition": 85,
+    "trendDirection": "rising",
+    "averagePrice": 4.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "simulation",
+    "platform": "mobile",
+    "demand": 70,
+    "competition": 60,
+    "trendDirection": "rising",
+    "averagePrice": 3.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "action",
+    "platform": "console",
+    "demand": 85,
+    "competition": 70,
+    "trendDirection": "stable",
+    "averagePrice": 69.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "sports",
+    "platform": "console",
+    "demand": 75,
+    "competition": 40,
+    "trendDirection": "stable",
+    "averagePrice": 59.99,
+    "month": "2024-01"
+  },
+  {
+    "genre": "racing",
+    "platform": "console",
+    "demand": 60,
+    "competition": 45,
+    "trendDirection": "falling",
+    "averagePrice": 49.99,
+    "month": "2024-01"
+  }
+]

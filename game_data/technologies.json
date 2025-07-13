@@ -1,0 +1,182 @@
+[
+  {
+    "id": "basic_engine",
+    "name": "Basic Game Engine",
+    "category": "engine",
+    "level": 1,
+    "researchCost": 10000,
+    "researchTime": 2,
+    "unlocked": true,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 10,
+        "description": "Basic game development capabilities"
+      }
+    ]
+  },
+  {
+    "id": "advanced_engine",
+    "name": "Advanced 3D Engine",
+    "category": "engine",
+    "level": 3,
+    "researchCost": 50000,
+    "researchTime": 6,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 25,
+        "description": "Advanced 3D rendering and physics"
+      },
+      {
+        "type": "new_feature",
+        "value": 1,
+        "description": "Unlocks 3D game development"
+      }
+    ]
+  },
+  {
+    "id": "next_gen_engine",
+    "name": "Next-Gen Engine",
+    "category": "engine",
+    "level": 5,
+    "researchCost": 200000,
+    "researchTime": 12,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 40,
+        "description": "Cutting-edge graphics and performance"
+      },
+      {
+        "type": "time_reduction",
+        "value": 20,
+        "description": "Faster development with advanced tools"
+      }
+    ]
+  },
+  {
+    "id": "basic_graphics",
+    "name": "Basic 2D Graphics",
+    "category": "graphics",
+    "level": 1,
+    "researchCost": 5000,
+    "researchTime": 1,
+    "unlocked": true,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 5,
+        "description": "Basic 2D sprite rendering"
+      }
+    ]
+  },
+  {
+    "id": "advanced_graphics",
+    "name": "Advanced Shaders",
+    "category": "graphics",
+    "level": 3,
+    "researchCost": 30000,
+    "researchTime": 4,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 20,
+        "description": "Custom shaders and visual effects"
+      }
+    ]
+  },
+  {
+    "id": "ray_tracing",
+    "name": "Real-time Ray Tracing",
+    "category": "graphics",
+    "level": 5,
+    "researchCost": 150000,
+    "researchTime": 8,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 35,
+        "description": "Photorealistic lighting and reflections"
+      }
+    ]
+  },
+  {
+    "id": "basic_ai",
+    "name": "Basic Game AI",
+    "category": "ai",
+    "level": 1,
+    "researchCost": 8000,
+    "researchTime": 2,
+    "unlocked": true,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 8,
+        "description": "Simple NPC behavior"
+      }
+    ]
+  },
+  {
+    "id": "advanced_ai",
+    "name": "Machine Learning AI",
+    "category": "ai",
+    "level": 4,
+    "researchCost": 80000,
+    "researchTime": 6,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "quality_bonus",
+        "value": 30,
+        "description": "Adaptive and intelligent NPCs"
+      },
+      {
+        "type": "new_feature",
+        "value": 1,
+        "description": "Procedural content generation"
+      }
+    ]
+  },
+  {
+    "id": "basic_networking",
+    "name": "Basic Multiplayer",
+    "category": "networking",
+    "level": 2,
+    "researchCost": 25000,
+    "researchTime": 3,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "new_feature",
+        "value": 1,
+        "description": "Local multiplayer support"
+      }
+    ]
+  },
+  {
+    "id": "online_networking",
+    "name": "Online Multiplayer",
+    "category": "networking",
+    "level": 4,
+    "researchCost": 100000,
+    "researchTime": 8,
+    "unlocked": false,
+    "benefits": [
+      {
+        "type": "new_feature",
+        "value": 1,
+        "description": "Online multiplayer with matchmaking"
+      },
+      {
+        "type": "quality_bonus",
+        "value": 25,
+        "description": "Stable online experience"
+      }
+    ]
+  }
+]

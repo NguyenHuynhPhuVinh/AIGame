@@ -1,0 +1,32 @@
+{
+  "name": "ai-game-dev-simulator",
+  "version": "1.0.0",
+  "description": "AI-Driven Game Development Simulator - AI manages all logic, game only reads/writes files",
+  "type": "module",
+  "main": "build/mcp/simpleServer.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/mcp/simpleServer.ts",
+    "start": "node build/mcp/simpleServer.js",
+    "init-studio": "tsx src/game/initStudio.ts",
+    "clear-data": "rm -rf game_data",
+    "backup-data": "cp -r game_data game_backup_$(date +%Y%m%d_%H%M%S)"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "game-development",
+    "simulator",
+    "typescript"
+  ],
+  "author": "AI Game Dev Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
