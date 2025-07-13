@@ -1,4 +1,4 @@
-// Game Types & Interfaces
+// Game Types & Interfaces - AI-Driven Architecture
 
 export interface WaifuCard {
   id: string;
@@ -23,51 +23,71 @@ export interface WaifuCard {
     | "idol";
 }
 
-export interface WaifuInstance {
-  instanceId: string;
-  cardId: string;
-  currentAttack: number;
-  currentDefense: number;
-  currentCharm: number;
-  canAttack: boolean;
-  buffs: WaifuBuff[];
-}
-
-export interface WaifuBuff {
+export interface Modifier {
   id: string;
   name: string;
-  type: "attack" | "defense" | "charm";
+  type: "attack" | "defense" | "charm" | "hp";
   value: number;
   duration: number; // -1 for permanent
   source: string;
 }
 
-export interface PlayerState {
-  id: "player1" | "player2";
-  name: string;
-  hp: number;
-  mana: number;
-  maxMana: number;
-  deck: string[];
-  hand: string[];
-  field: WaifuInstance[];
-  graveyard: string[];
+export interface WaifuInstance {
+  instanceId: string;
+  cardId: string;
+  ownerId: string;
+  position: number;
+  status: "summoning_sickness" | "ready" | "tapped" | "stunned";
+  currentHP?: number; // If different from base
+  modifiers: Modifier[];
+  summonedTurn: number;
 }
 
+export interface CardInstance {
+  instanceId: string;
+  cardId: string;
+  ownerId: string;
+  location: "hand" | "deck" | "field" | "graveyard";
+  position?: number;
+}
+
+// Core State Interfaces
 export interface GameState {
   gameId: string;
   status: "waiting" | "playing" | "finished";
   currentPlayer: "player1" | "player2";
   turnNumber: number;
   phase: "draw" | "main" | "battle" | "end";
-  players: {
-    player1: PlayerState;
-    player2: PlayerState;
-  };
-  winner?: "player1" | "player2";
-  gameLog: GameLogEntry[];
+  winner?: "player1" | "player2" | "draw";
   createdAt: string;
-  lastAction: string;
+  lastUpdated: string;
+}
+
+export interface PlayerState {
+  playerId: string;
+  name: string;
+  hp: number;
+  mana: number;
+  maxMana: number;
+  handSize: number;
+  deckSize: number;
+  fieldSize: number;
+  graveyardSize: number;
+}
+
+export interface FieldState {
+  player1Field: WaifuInstance[];
+  player2Field: WaifuInstance[];
+  maxFieldSize: number;
+}
+
+export interface CardState {
+  player1Hand: CardInstance[];
+  player2Hand: CardInstance[];
+  player1Deck: CardInstance[];
+  player2Deck: CardInstance[];
+  player1Graveyard: CardInstance[];
+  player2Graveyard: CardInstance[];
 }
 
 export interface GameLogEntry {
@@ -79,52 +99,60 @@ export interface GameLogEntry {
   details: any;
 }
 
-export type GamePhase = "draw" | "main" | "battle" | "end";
+export interface HistoryState {
+  gameLog: GameLogEntry[];
+  lastAction: string;
+}
+
+// Type aliases
 export type PlayerId = "player1" | "player2";
-export type AttackTarget = "player" | "waifu";
+export type GamePhase = "draw" | "main" | "battle" | "end";
+export type CardLocation = "hand" | "deck" | "field" | "graveyard";
+export type WaifuStatus = "summoning_sickness" | "ready" | "tapped" | "stunned";
 
-// Game Actions
-export interface SummonAction {
-  type: "summon";
+// MCP Tool Parameters
+export interface UpdateGamePhaseParams {
+  phase: GamePhase;
+  currentPlayer?: PlayerId;
+  turnNumber?: number;
+}
+
+export interface UpdatePlayerStatsParams {
   playerId: PlayerId;
-  cardId: string;
+  hp?: number;
+  mana?: number;
+  maxMana?: number;
 }
 
-export interface AttackAction {
-  type: "attack";
+export interface MoveCardParams {
+  cardInstanceId: string;
+  fromLocation: CardLocation;
+  toLocation: CardLocation;
+  position?: number;
+}
+
+export interface SummonWaifuParams {
+  cardInstanceId: string;
   playerId: PlayerId;
-  attackerIndex: number;
-  targetType: AttackTarget;
-  targetIndex?: number;
+  position: number;
+  status?: WaifuStatus;
 }
 
-export interface PhaseAction {
-  type: "advance_phase";
-  playerId: PlayerId;
+export interface UpdateWaifuStatusParams {
+  waifuInstanceId: string;
+  status?: WaifuStatus;
+  currentHP?: number;
+  modifiers?: Modifier[];
 }
 
-export type GameAction = SummonAction | AttackAction | PhaseAction;
-
-// Game Results & Responses
-export interface SummonResult {
-  success: boolean;
-  waifusOnField: number;
-  maxFieldSize: number;
-  error?: string;
-  instanceId?: string;
+export interface RemoveWaifuParams {
+  waifuInstanceId: string;
+  reason: "destroyed" | "returned" | "sacrificed";
 }
 
-export interface CombatResult {
-  attackerDamage: number;
-  defenderDamage: number;
-  attackerSurvived: boolean;
-  defenderSurvived: boolean;
-  directPlayerDamage?: number;
+export interface AddGameLogParams {
+  playerId: string;
+  action: string;
   description: string;
-}
-
-export interface GameError {
-  code: string;
-  message: string;
-  suggestion: string;
+  details?: any;
 }

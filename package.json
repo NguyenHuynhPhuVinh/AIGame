@@ -11,7 +11,9 @@
     "build": "tsc",
     "dev": "tsx watch src/mcp/server.ts",
     "start": "node build/mcp/server.js",
-    "init-game": "node build/game/init.js"
+    "init-game": "node build/game/initializeGame.js",
+    "clear-states": "rm -rf game_state",
+    "backup-states": "cp -r game_state game_backup_$(date +%Y%m%d_%H%M%S)"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.2",

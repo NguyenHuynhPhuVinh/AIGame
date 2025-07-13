@@ -1,0 +1,24 @@
+{
+  "player1": {
+    "playerId": "player1",
+    "name": "AI Player 1",
+    "hp": 20,
+    "mana": 1,
+    "maxMana": 1,
+    "handSize": 5,
+    "deckSize": 14,
+    "fieldSize": 0,
+    "graveyardSize": 0
+  },
+  "player2": {
+    "playerId": "player2",
+    "name": "AI Player 2",
+    "hp": 20,
+    "mana": 1,
+    "maxMana": 1,
+    "handSize": 5,
+    "deckSize": 14,
+    "fieldSize": 0,
+    "graveyardSize": 0
+  }
+}
