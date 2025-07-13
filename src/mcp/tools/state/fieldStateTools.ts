@@ -208,7 +208,7 @@ export function registerFieldStateTools(server: any) {
         await StateManager.addGameLogEntry({
           id: `log_${Date.now()}`,
           timestamp: new Date().toISOString(),
-          playerId: playerId,
+          playerId: playerId!,
           action: "summon",
           description: `${playerId} summoned ${card.name} to position ${position}`,
           details: {

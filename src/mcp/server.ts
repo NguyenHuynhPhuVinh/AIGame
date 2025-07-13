@@ -8,12 +8,14 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerGameStateTools } from "./tools/state/gameStateTools.js";
 import { registerPlayerStateTools } from "./tools/state/playerStateTools.js";
 import { registerFieldStateTools } from "./tools/state/fieldStateTools.js";
+import { registerCardStateTools } from "./tools/state/cardStateTools.js";
 
 // Create MCP Server
 const server = new McpServer({
   name: "ai-driven-waifu-card-game",
   version: "2.0.0",
-  description: "AI-Driven Waifu Card Game with Pure State Management - AI controls everything through MCP tools",
+  description:
+    "AI-Driven Waifu Card Game with Pure State Management - AI controls everything through MCP tools",
 });
 
 // Register all tool categories
@@ -26,6 +28,9 @@ function registerAllTools() {
 
   console.log("🔧 Registering Field State Tools...");
   registerFieldStateTools(server);
+
+  console.log("🔧 Registering Card State Tools...");
+  registerCardStateTools(server);
 
   console.log("✅ All MCP tools registered successfully!");
 }
@@ -42,7 +47,7 @@ async function main() {
   console.log("  📊 Game State Tools (5 tools)");
   console.log("  👥 Player State Tools (5 tools)");
   console.log("  ⚔️ Field State Tools (4 tools)");
-  console.log("  🃏 Card State Tools (coming soon)");
+  console.log("  🃏 Card State Tools (4 tools)");
   console.log("  📜 History Tools (coming soon)");
   console.log("");
   console.log("🎯 Key Features:");
